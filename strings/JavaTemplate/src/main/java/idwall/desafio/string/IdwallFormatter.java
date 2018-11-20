@@ -13,8 +13,8 @@ public class IdwallFormatter extends StringFormatter {
     }
 
     /**
-     * Formats text, with no justify, for the lines to meet the column cap as
-     * defined in the object instantiation.
+     * Formats text, for the lines to meet the column cap and justify as defined
+     * in the object instantiation.
      *
      * @param text Text to be formatted.
      * @return Formatted text.
@@ -24,11 +24,15 @@ public class IdwallFormatter extends StringFormatter {
         List<String> lines = this.getFormattedLines(text);
         StringBuilder sb = new StringBuilder();
 
-        for (int i = 0; i < lines.size() - 1; ++i) {
-            sb.append(lines.get(i));
-            sb.append("\n");
+        for (int i = 0; i < lines.size(); ++i) {
+            String line;
+            if (this.justify == true) {
+                line = justifyLine(lines.get(i));
+            } else {
+                line = lines.get(i);
+            }
+            sb.append(line + "\n");
         }
-        sb.append(lines.get(lines.size() - 1));
 
         return sb.toString();
     }
@@ -104,7 +108,7 @@ public class IdwallFormatter extends StringFormatter {
                 sb.append(w);
                 lineLength += w.length();
             }
-            else if (lineLength + w.length() + 1 <= 40) {
+            else if (lineLength + w.length() + 1 <= this.limit) {
                 // word does not overflow line
                 sb.append(' ' + w);
                 lineLength += w.length() + 1;

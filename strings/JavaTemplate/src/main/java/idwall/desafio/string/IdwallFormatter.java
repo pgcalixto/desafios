@@ -8,6 +8,10 @@ import java.util.List;
  */
 public class IdwallFormatter extends StringFormatter {
 
+    public IdwallFormatter(Integer limit, Boolean justify) {
+        super(limit, justify);
+    }
+
     /**
      * Formats text, with no justify, for the lines to meet the column cap as
      * defined in the object instantiation.

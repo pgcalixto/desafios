@@ -34,6 +34,48 @@ public class IdwallFormatter extends StringFormatter {
     }
 
     /**
+     * Justify a line that has only 1 word or its length less than the specified
+     * limit.
+     *
+     * @param line Line to be justified.
+     * @return Justified line.
+     */
+    private String justifyLine(String line) {
+        // calculates extra spaces to add and build the correspondent string
+        // based on it
+        String[] words = line.split(" ");
+
+        if (words.length == 1) {
+            return words[0];
+        }
+
+        // `spaces` is the number of spaces between words.
+        // also, until the word of index `extraSpaceIndex`, there should
+        // be 1 additional space.
+        int spaces = 1 + (this.limit - line.length()) / (words.length - 1);
+        int extraSpaceIndex =
+            (this.limit - line.length()) % (words.length - 1);
+
+        StringBuilder sb = new StringBuilder();
+
+        for (int i = 0; i < words.length - 1; ++i) {
+            // for each word, append it to the string builder, then
+            // append `spaces` or `spaces + 1` whitespaces.
+            sb.append(words[i]);
+
+            int currentSpaces = spaces;
+            if (i < extraSpaceIndex) {
+                ++currentSpaces;
+            }
+            for (int j = 0; j < currentSpaces; ++j) {
+                sb.append(' ');
+            }
+        }
+        sb.append(words[words.length - 1]);
+        return sb.toString();
+    }
+
+    /**
      * Format lines (without justify) and return them in a list of lines.
      *
      * @param text Text to be formatted

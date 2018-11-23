@@ -17,6 +17,8 @@ class SubredditSpider(scrapy.Spider):
 
     def parse(self, response):
 
+        subreddit_name = response.url.split('/')[4]
+        page_data = []
         for thread in response.xpath("//div[contains(@class, 'thing')]"):
 
             # parses upvotes
@@ -35,14 +37,26 @@ class SubredditSpider(scrapy.Spider):
             title_data = thread.xpath(".//a[contains(@class, 'title')]")
             title = title_data.xpath("./text()").extract_first()
             thread_link = title_data.xpath("./@href").extract_first()
+            if thread_link[:3] == '/r/':
+                thread_link = 'https://old.reddit.com' + thread_link
 
             comments_link = thread.xpath(
                 ".//ul[contains(@class, 'buttons')]/li[contains(@class, 'first')]/a/@href"
             ).extract_first()
 
             yield {
+                'subreddit': subreddit_name,
                 'upvotes': vote,
                 'title': title,
                 'thread_link': thread_link,
                 'comments_link': comments_link
             }
+
+        # if the last item in the page has a score greater than 5000 and there
+        # is a link to a next page, follows the link
+        next_page = response.xpath(
+            "//span[contains(@class, 'next-button')]/a/@href").extract_first()
+
+        if len(page_data) >= 25 and float(
+                page_data[-1]['upvotes']) >= 5000 and next_page is not None:
+            yield scrapy.Request(next_page, callback=self.parse)

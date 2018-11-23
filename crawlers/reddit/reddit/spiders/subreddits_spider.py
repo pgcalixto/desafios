@@ -20,9 +20,16 @@ class SubredditSpider(scrapy.Spider):
         for thread in response.xpath("//div[contains(@class, 'thing')]"):
 
             # parses upvotes
-            vote = thread.xpath(
+            vote_str = thread.xpath(
                 ".//div[contains(@class, 'score unvoted')]/text()"
             ).extract_first()
+            if vote_str == '•':
+                continue
+
+            vote = float(vote_str[:-1]) * 1000 if vote_str[-1] == 'k' \
+                   else float(vote_str)
+            if vote < 5000:
+                break
 
             # parses title of thread, thread link and comments link
             title_data = thread.xpath(".//a[contains(@class, 'title')]")

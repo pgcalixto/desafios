@@ -1,5 +1,11 @@
 # Desafio 1: Strings
 
+## Instruções para uso da solução
+
+* [Instruções](USAGE.md)
+
+## Descrição
+
 Após ler o coding style do kernel Linux, você descobre a mágica que é
 ter linhas de código com no máximo 80 caracteres cada uma.
 

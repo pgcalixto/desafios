@@ -1,5 +1,11 @@
 # Desafio 2: Crawlers
 
+## Instruções de uso da solução
+
+* [Instruções](USAGE.md)
+
+## Descrição
+
 Parte do trabalho na IDwall inclui desenvolver *crawlers/scrapers* para coletar dados de websites.
 Como nós nos divertimos trabalhando, às vezes trabalhamos para nos divertir!
 

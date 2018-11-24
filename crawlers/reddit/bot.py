@@ -1,7 +1,12 @@
 import logging
 
+from multiprocessing import Process
+from scrapy.crawler import CrawlerProcess
+from scrapy.utils.project import get_project_settings
 from telegram.ext import CommandHandler
 from telegram.ext import Updater
+
+from reddit.spiders.subreddits_spider import SubredditSpider
 
 logging.basicConfig(
     level=logging.DEBUG,
@@ -9,7 +14,9 @@ logging.basicConfig(
 
 
 def crawl(args):
-    pass
+    process = CrawlerProcess(get_project_settings())
+    process.crawl(SubredditSpider, subreddits=args)
+    process.start()
 
 
 def nothing_to_do(bot, update, args):
@@ -24,8 +31,20 @@ def nothing_to_do(bot, update, args):
         update (telegram.update.Update): Incoming update.
         args (str): List of subreddits, separated by semicolon.
     '''
-    crawl(args)
-    bot.send_message(chat_id=update.message.chat_id, text="Hello there!")
+    # wait for crawling process
+    process = Process(target=crawl, args=args)
+    process.start()
+    process.join()
+
+    # parses thread information and sends 1 thread per bot message
+    threads_content = ''
+    with open('output.txt', 'r') as f:
+        threads_content = f.read()
+
+    threads = threads_content.split("------------------------------")
+
+    for thread in threads:
+        bot.send_message(chat_id=update.message.chat_id, text=thread)
 
 
 def main():
